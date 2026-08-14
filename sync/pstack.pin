@@ -1,0 +1,6 @@
+{
+  "remote": "https://github.com/cursor/plugins.git",
+  "commit": "2a8044425c7bddf429c3bdedf3ab61e791d34d65",
+  "subdir": "pstack",
+  "note": "Upstream pstack lives in a subdir of the cursor/plugins monorepo. The vendored skills/agents/commands in this repo were generated from this exact commit. bin/bootstrap.sh does a pinned partial clone into .cache/pstack-src so `bun run sync` can regenerate. Bump commit + re-run sync to adopt a newer pstack."
+}

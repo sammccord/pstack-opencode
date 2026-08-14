@@ -1,0 +1,11 @@
+# Pinned upstream checkout populated by bin/bootstrap.sh. Regenerable, never committed.
+.cache/
+
+# Backups install.sh --force sets aside in the live config (not in-repo, but guard anyway).
+*.pre-pstack.bak
+
+# Human-readable overlay backups produced during authoring.
+*.original.md
+
+node_modules/
+.DS_Store

@@ -1,0 +1,147 @@
+# pstack Cursor -> opencode mechanical rewrites.
+# Format: <regex><TAB><replacement><TAB><note>
+# Applied in order to every copied markdown file. JS regex, global + multiline.
+# Semantic restructuring does NOT belong here. Put those files in overlay/.
+
+# --- subagent types ---
+`generalPurpose`	`pstack-fast-read`	builtin generalPurpose has no model control
+\bgeneralPurpose\b	pstack-fast-read	bare mention
+`Comment Sicko`	`comment-sicko`	agent name = filename, kebab required
+"Comment Sicko"	"comment-sicko"	quoted form
+\bComment Sicko\b	comment-sicko	prose form
+
+# --- tool names ---
+\bAskQuestion\b	question	opencode tool is lowercase `question`
+\ballow_multiple\b	multiple	question tool param name
+`Glob`	`glob`	opencode tools are lowercase
+`Grep`	`grep`	opencode tools are lowercase
+`Read`	`read`	opencode tools are lowercase
+`Write`	`write`	opencode tools are lowercase
+`Edit`	`edit`	opencode tools are lowercase
+\btodolist\b	todo list	opencode tools are todowrite/todoread
+`Task`	`task`	opencode tool is lowercase
+
+# --- model slugs -> agent names ---
+`grok-4\.6-fast-xhigh`	`pstack-fast`	no grok on this gateway
+`claude-fable-5-thinking-max`	`pstack-judgment`	model pinned in agent def
+`gpt-5\.6-sol-max`	`pstack-precise`	model pinned in agent def
+`claude-opus-5-thinking-xhigh`	`pstack-opus`	model pinned in agent def
+grok-4\.6-fast-xhigh	pstack-fast	bare slug
+claude-fable-5-thinking-max	pstack-judgment	bare slug
+gpt-5\.6-sol-max	pstack-precise	bare slug
+claude-opus-5-thinking-xhigh	pstack-opus	bare slug
+
+# --- paths ---
+~/\.cursor/rules/pstack-models\.mdc	the `model:` line in `~/.config/opencode/agent/pstack-*.md` (edit via `/setup-pstack`)	config surface moved
+`~/\.cursor/skills/	`~/.config/opencode/skills/	global skill dir
+`\.cursor/skills/	`.opencode/skills/	project skill dir
+~/\.cursor/skills/	~/.config/opencode/skills/	global skill dir bare
+(?<!\.)\.cursor/skills/	.opencode/skills/	project skill dir bare
+`\.cursor/worktrees/[^`]*`	`git worktree list --porcelain` (the authoritative source; never guess the path)	discover worktrees via git
+~/\.cursor/projects/\*/	~/.local/share/opencode/storage/session/	transcript store moved
+~/\.cursor/projects/	~/.local/share/opencode/storage/	transcript store moved
+`agent-transcripts/`	`~/.local/share/opencode/storage/` (read it with `~/.config/opencode/skills/poteto-mode/scripts/session-digest.ts`)	opencode session store
+\bagent-transcripts/\b	~/.local/share/opencode/storage/	opencode session store
+
+# --- script paths must be absolute; skills live outside any repo ---
+`scripts/worktree-audit\.sh`	`~/.config/opencode/skills/poteto-mode/scripts/worktree-audit.sh`	absolute
+`scripts/watch-pr/watch-pr`	`~/.config/opencode/skills/poteto-mode/scripts/watch-pr/watch-pr`	absolute
+`scripts/orch/orch\.ts`	`~/.config/opencode/skills/poteto-mode/scripts/orch/orch.ts`	absolute
+`scripts/orch\.ts`	`~/.config/opencode/skills/poteto-mode/scripts/orch/orch.ts`	absolute
+`scripts/log\.sh`	`~/.config/opencode/skills/show-me-your-work/scripts/log.sh`	absolute
+`\.cursor/settings\.json`[^.]*\.	opencode discovers skills by directory, no enablement file is needed.	no plugin enablement in opencode
+
+# --- external plugin deps that do not exist here ---
+# Longest phrases first. These rules run in file order, so a short rule that fires early
+# leaves mangled grammar behind for the longer one to never match.
+the `deslop` skill from the `cursor-team-kit` plugin \(`/deslop`\)	the **deslopify** skill (`/deslopify`)	user already has deslopify
+the `control-ui` skill from the `cursor-team-kit` plugin	the project's UI verification skill	control-ui unavailable
+the `control-cli` skill from the `cursor-team-kit` plugin	the project's CLI verification skill	control-cli unavailable
+the a project `verify-\*` skill[^.]*from the `cursor-team-kit` plugin	the project's verification skill	guard against double substitution
+`cursor-team-kit` publishes `control-cli` \(CLIs and TUIs\) and `control-ui` \(browser / Electron / web UIs\)	use the project's own verification skill for that surface (see **create-verification-skill**)	neither skill exists here
+`control-cli` or `control-ui`	the project's verification skill	neither skill exists here
+`control-cli`	the project's CLI verification skill	control-cli unavailable
+`control-ui`	the project's UI verification skill	control-ui unavailable
+ from the `cursor-team-kit` plugin		plugin does not exist here
+`cursor-team-kit`	the project's own skills	plugin does not exist here
+\bcursor-team-kit\b	the project's own skills	plugin does not exist here
+the matching control skill	the project's verification skill for that surface	control-* unavailable
+the relevant control skill	the project's verification skill	control-* unavailable
+the control skill	the project's verification skill	control-* unavailable
+No control skill for	No verification skill for	control-* unavailable
+`/deslop`(?!ify)	`/deslopify`	maps to installed skill
+
+# --- Cursor built-ins with no analog ---
+# `/create-skill` is referenced normatively for SKILL.md authoring. opencode's frontmatter
+# rules are far stricter (5 fields, kebab name matching the dir), so the pointer has to move
+# to pstack's own playbook, which the overlay rewrites to carry those rules.
+the \*\*create-skill\*\* skill \(Cursor's built-in for authoring SKILL\.md files\)	the **authoring-a-skill** playbook (`playbooks/authoring-a-skill.md`)	no /create-skill builtin
+the `create-skill` skill \(Cursor's built-in for authoring SKILL\.md files\)	the **authoring-a-skill** playbook (`playbooks/authoring-a-skill.md`)	no /create-skill builtin
+Cursor's built-in `create-skill` skill	the **authoring-a-skill** playbook	no /create-skill builtin
+\*\*create-skill\*\* skill	**authoring-a-skill** playbook	no /create-skill builtin
+`create-skill`	the **authoring-a-skill** playbook	no /create-skill builtin
+\bcreate-skill\b	authoring-a-skill	no /create-skill builtin
+`/create-skill`	the **authoring-a-skill** playbook	no /create-skill builtin
+
+# `/loop` was Cursor's long-autonomous-run command. Nothing wakes an opencode session, so
+# the only honest translation is an in-session directive.
+"/loop until X"	"run until done"	no /loop in opencode
+`/loop until X`	"run until done"	no /loop in opencode
+, or `/loop until X`		no /loop in opencode
+`/loop`	iterate	no /loop in opencode
+
+# Cursor cloud agents have no opencode analog: no separate checkout, no unattended run, no
+# wake chain. Rewriting the product name alone turns each of these into a confident claim
+# about an opencode feature that does not exist, which is worse than leaving it Cursor-shaped.
+# Longest first.
+, riding a cloud-sleeper wake chain \(a sleeping cloud agent t[^)]*\)		no wake chain in opencode
+on a cloud-sleeper wake chain	on a timer you drive from this session	no wake chain in opencode
+a cloud-agent status / liveness probe	reading the subagent's returned report	no liveness probe
+cloud-agent liveness per owner	each owner subagent's returned report	no liveness probe
+the cloud agent's status in the [a-zA-Z]+ dashboard	the subagent's returned report	no dashboard
+each a Cursor cloud agent, 		no cloud agents in opencode
+One Cursor cloud agent per PR	One local owner subagent per PR	no cloud agents in opencode
+a Cursor cloud agent	a local subagent	no cloud agents in opencode
+Cursor cloud agents	local subagents	no cloud agents in opencode
+Cursor cloud agent	local subagent	no cloud agents in opencode
+the division of labor the cloud environment forces	the division of labor a single shared checkout forces	one local filesystem
+a cloud agent must never pull branches below its own	a worker must never pull branches below its own	no cloud agents
+local agents are dead, cloud work is not	in-flight subagents are gone, but pushed branches and open PRs are not	nothing survives a restart locally
+reattach cloud work by PR and branch rather than agent id	reattach work by PR and branch rather than session id	no cloud agents
+verbatim paste is for cloud spawns and every resume	verbatim paste is for every spawn and every resume	no cloud agents
+its spawn budget with the cloud default and the local exception list	its spawn budget	all spawns are local
+Restacks run in cloud; a local restack at this scale takes the lap	Restacks run in a dedicated worktree so they do not block the coordinator; at this scale an in-place restack takes the lap	no cloud agents
+and a cloud one plus a local one produce it twice	and two of them produce it twice	no cloud agents
+N parallel cloud workers	N parallel local workers	no cloud agents
+not the cloud concurrency limit	bounded by this machine rather than a cloud quota	no cloud quota
+a cloud-agent URL handoff, or	or	no cloud agent URLs
+a cloud-agent URL, or	or	no cloud agent URLs
+cloud-agent URL, or pushed branch	or a pushed branch	no cloud agent URLs
+
+# pstack disambiguates its Babysit playbook from Cursor's identically-described built-in.
+# No such built-in exists here, so the caveat is noise that invites a wrong routing decision.
+, and not Cursor's built-in babysit skill, whose description matches the same words		no competing builtin
+ This playbook replaces Cursor's babysit skill for these requests, so do not route there even though its description matches the same words		no competing builtin
+Cursor's built-in babysit skill	the Babysit playbook	no competing builtin
+
+# The reflect reviewers list where SKILL.md files can live. Cursor's plugin cache is not
+# one of them here; synced pstack skills land in the global skills dir like any other.
+or plugin-installed paths under `~/\.cursor/plugins/`	or synced pstack paths under `~/.config/opencode/skills/`	no plugin cache
+
+# --- grammar cleanup after phrase substitution ---
+# These run last. A rule above may replace a noun phrase that already had an article or a
+# duplicate qualifier in front of it, and the leftover reads as a typo.
+fails the the \*\*	fails the **	double article
+\bthe the \b	the 	double article
+the project's verification skill for that surface\. use the project's own verification skill for that surface \(see \*\*create-verification-skill\*\*\)\.	the project's own verification skill for that surface. Generate one with **create-verification-skill** when none exists.	double substitution
+\(the project's UI verification skill or the project's CLI verification skill as the change demands\)	(the project's own verification skill for the surface the change touches)	double substitution
+the project's UI verification skill or the project's CLI verification skill runtime verification	the project's own runtime verification skill	double substitution
+the project's UI verification skill or the project's CLI verification skill	the project's own verification skill	double substitution
+ \(from the project's own skills\)		redundant after substitution
+\bskill skill\b	skill	double noun
+\bplaybook playbook\b	playbook	double noun
+
+# --- product name ---
+\bCursor restart\b	opencode restart	product name
+\ba Cursor\b	an opencode	product name
+\bCursor\b	opencode	product name

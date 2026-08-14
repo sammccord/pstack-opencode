@@ -1,0 +1,13 @@
+{
+  "name": "pstack-opencode",
+  "private": true,
+  "description": "The pstack Cursor plugin ported to opencode: skills, model-diverse subagents, and a sticky primary agent, kept in sync with upstream by a re-runnable pipeline.",
+  "scripts": {
+    "bootstrap": "bin/bootstrap.sh",
+    "sync": "bun run sync/sync.ts",
+    "sync:dry": "bun run sync/sync.ts --dry-run",
+    "validate": "bun run sync/validate.ts",
+    "install:config": "bin/install.sh",
+    "uninstall:config": "bin/uninstall.sh"
+  }
+}

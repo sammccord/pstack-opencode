@@ -1,0 +1,14 @@
+{
+  "name": "pstack-sync",
+  "private": true,
+  "type": "module",
+  "description": "Sync the pstack Cursor plugin into opencode global config",
+  "scripts": {
+    "sync": "bun run sync.ts",
+    "dry": "bun run sync.ts --dry-run",
+    "validate": "bun run validate.ts"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
